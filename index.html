@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0d0e12">
+<title>THE CORNER AZUL — Fight Camp</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root {
+  --bg: #0b0d12;
+  --panel: #131722;
+  --panel2: #1c2232;
+  --border: #283044;
+  --red: #2f80ff;
+  --red-dark: #123f91;
+  --gold: #ffb703;
+  --text: #f1f5f9;
+  --muted: #808ea8;
+}
+* { box-sizing: border-box; }
+body {
+  background: radial-gradient(circle at 50% 0%, #101a2b 0%, var(--bg) 75%);
+  color: var(--text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  min-height: 100vh;
+}
+.border-boxer { border: 1px solid var(--border); }
+.glow-red { box-shadow: 0 0 20px rgba(47, 128, 255, 0.25); }
+.timer-ring {
+  background: conic-gradient(var(--red) var(--deg, 0deg), #1e2638 0deg);
+}
+.custom-scroll::-webkit-scrollbar { width: 6px; }
+.custom-scroll::-webkit-scrollbar-track { background: #131722; }
+.custom-scroll::-webkit-scrollbar-thumb { background: #283044; border-radius: 3px; }
+</style>
+</head>
+<body class="p-4 md:p-6">
+
+<div class="max-w-[1500px] mx-auto space-y-6">
+
+  <!-- TOP BAR -->
+  <header class="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-[#131722] border-boxer">
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-blue-900 flex items-center justify-center text-xl font-black shadow-lg">🥊</div>
+      <div>
+        <h1 class="text-xl font-extrabold tracking-wider text-white">THE CORNER</h1>
+        <p class="text-xs text-[#808ea8] font-bold tracking-widest uppercase">FIGHT CAMP SYSTEM • DAY 1</p>
+      </div>
+    </div>
+    
+    <div class="flex items-center gap-4">
+      <div class="text-right hidden sm:block">
+        <div id="clockDisplay" class="font-mono text-lg font-bold text-slate-200">00:00:00</div>
+        <div id="dateDisplay" class="text-xs text-[#808ea8]">--</div>
+      </div>
+      <button id="btnBell" class="px-3 py-2 rounded-xl bg-[#1c2232] border-boxer hover:border-blue-500 transition text-sm">🔔 Probar Campana</button>
+      <button id="btnExport" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 font-bold text-sm transition shadow-lg shadow-blue-900/40">📥 Exportar Campamento</button>
+    </div>
+  </header>
+
+  <!-- HERO FIGHTER CARD -->
+  <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 rounded-3xl bg-gradient-to-br from-[#181d2b] to-[#11141d] p-6 border-boxer flex flex-col md:flex-row gap-6 items-center relative overflow-hidden">
+      <div class="relative w-36 h-36 md:w-44 md:h-44 rounded-2xl overflow-hidden border-2 border-blue-500/50 shadow-2xl flex-shrink-0">
+        <img id="avatarImg" src="_46A2732-Mejorado-NR.jpg" alt="Manuel Pardo" class="w-full h-full object-cover">
+      </div>
+      <div class="space-y-3 text-center md:text-left flex-1">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 text-xs font-bold tracking-widest">
+          🔵 RINCÓN AZUL • CAMPAMENTO ACTIVO
+        </div>
+        <h2 id="fighterName" class="text-3xl md:text-5xl font-black tracking-tight text-white uppercase">MANUEL PARDO</h2>
+        <div class="flex flex-wrap items-center gap-3 justify-center md:justify-start">
+          <p id="fighterAlias" class="text-amber-400 font-semibold tracking-wide text-sm">"EL MATADOR"</p>
+          <button id="btnEditProfile" class="px-3 py-1.5 rounded-lg bg-blue-600/15 border border-blue-500/30 text-blue-300 text-xs font-bold hover:bg-blue-600/25 transition">✏️ EDITAR PERFIL</button>
+        </div>
+        <p class="text-slate-400 text-sm max-w-xl">Bienvenido a tu panel de control de campamento. Configura tus rutinas, controla tus pesos, prepara tu estrategia y entrena tus reflejos.</p>
+        
+        <div class="flex flex-wrap gap-4 pt-2 justify-center md:justify-start">
+          <div class="bg-[#0b0d12] px-4 py-2 rounded-xl border border-slate-800">
+            <span class="text-xs text-[#808ea8] block">DIVISIÓN</span>
+            <span class="font-bold text-sm text-slate-200">Peso Wélter</span>
+          </div>
+          <div class="bg-[#0b0d12] px-4 py-2 rounded-xl border border-slate-800">
+            <span class="text-xs text-[#808ea8] block">RÉCORD PROFESIONAL</span>
+            <span class="font-bold text-sm text-emerald-400">0 - 0 - 0 (0 KOs)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- METRICAS DE COMBATE -->
+    <div class="rounded-3xl bg-[#131722] p-6 border-boxer flex flex-col justify-between">
+      <h3 class="text-sm font-bold text-[#808ea8] tracking-widest uppercase mb-4">📊 Estado del Campamento</h3>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-[#0b0d12] p-4 rounded-2xl border border-slate-800">
+          <div class="text-xs text-[#808ea8]">RUTINAS HÉCHAS</div>
+          <div id="statDoneTasks" class="text-3xl font-black text-white mt-1">0</div>
+        </div>
+        <div class="bg-[#0b0d12] p-4 rounded-2xl border border-slate-800">
+          <div class="text-xs text-[#808ea8]">NOTAS TÁCTICAS</div>
+          <div id="statNotes" class="text-3xl font-black text-white mt-1">0</div>
+        </div>
+        <div class="bg-[#0b0d12] p-4 rounded-2xl border border-slate-800">
+          <div class="text-xs text-[#808ea8]">AGUA HOY</div>
+          <div id="statWater" class="text-3xl font-black text-cyan-400 mt-1">0.0 L</div>
+        </div>
+        <div class="bg-[#0b0d12] p-4 rounded-2xl border border-slate-800">
+          <div class="text-xs text-[#808ea8]">HÁBITOS HOY</div>
+          <div id="statHabits" class="text-3xl font-black text-amber-400 mt-1">0/0</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- EDITAR PERFIL -->
+  <div id="profileModal" class="hidden fixed inset-0 z-50 bg-black/75 p-4 items-center justify-center">
+    <section class="w-full max-w-md rounded-2xl bg-[#131722] border border-blue-500/40 p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-black">👤 PERFIL DEL BOXEADOR</h3>
+        <button id="btnCloseProfile" class="text-slate-400 hover:text-white text-xl" aria-label="Cerrar">✕</button>
+      </div>
+      <label class="block text-xs font-bold text-slate-400">NOMBRE</label>
+      <input id="profileNameInput" maxlength="40" class="w-full bg-[#0b0d12] border border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500" placeholder="Tu nombre">
+      <label class="block text-xs font-bold text-slate-400">APODO</label>
+      <input id="profileAliasInput" maxlength="40" class="w-full bg-[#0b0d12] border border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500" placeholder="Tu apodo">
+      <div class="space-y-2">
+        <label for="profilePhotoInput" class="block text-xs font-bold text-slate-400">FOTO DE PERFIL</label>
+        <input id="profilePhotoInput" type="file" accept="image/*" class="w-full text-sm text-slate-300 file:mr-3 file:rounded-lg file:border-0 file:bg-blue-600 file:px-3 file:py-2 file:font-bold file:text-white">
+        <div class="flex items-center gap-3">
+          <img id="profilePhotoPreview" alt="Vista previa de la foto" class="hidden w-16 h-16 rounded-xl object-cover border border-blue-500/40">
+          <button id="btnRemovePhoto" type="button" class="text-xs text-blue-300 underline">Quitar foto personalizada</button>
+        </div>
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button id="btnSaveProfile" class="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 font-bold">GUARDAR CAMBIOS</button>
+        <button id="btnCancelProfile" class="px-4 py-3 rounded-xl bg-[#1c2232] border border-slate-700 font-bold">CANCELAR</button>
+      </div>
+      <p class="text-xs text-slate-500">El nombre y el apodo se guardan automáticamente en este dispositivo.</p>
+    </section>
+  </div>
+
+  <!-- GRID PRINCIPAL -->
+  <main class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- CRONÓMETRO DE ASALTOS (POMODORO / HIIT) -->
+    <section class="lg:col-span-5 rounded-3xl bg-[#131722] p-6 border-boxer flex flex-col items-center text-center">
+      <div class="w-full flex justify-between items-center mb-4">
+        <h3 class="font-extrabold text-white tracking-wide">⏱ RELOJ DE ASALTOS (ROUND CLOCK)</h3>
+        <span id="roundMode" class="text-xs font-bold px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">COMBATE</span>
+      </div>
+
+      <div class="relative w-56 h-56 rounded-full timer-ring p-3 my-4 flex items-center justify-center shadow-2xl" id="timerRing">
+        <div class="w-full h-full bg-[#131722] rounded-full flex flex-col items-center justify-center border-4 border-[#0b0d12]">
+          <div id="timerDisplay" class="font-mono text-5xl font-black tracking-tighter text-white">03:00</div>
+          <div id="roundCounter" class="text-xs font-bold text-amber-400 mt-1">ROUND 1 / 12</div>
+        </div>
+      </div>
+
+      <div class="flex gap-3 w-full justify-center mb-4">
+        <button id="btnTimerStart" class="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 font-extrabold text-white shadow-lg transition">▶ ENTRAR EN ASALTO</button>
+        <button id="btnTimerReset" class="px-4 py-3 rounded-xl bg-[#1c2232] hover:bg-slate-700 font-bold border-boxer transition">↺ RESET</button>
+      </div>
+
+      <div class="grid grid-cols-3 gap-2 w-full">
+        <button class="btnPreset py-2 text-xs font-bold bg-[#1c2232] rounded-xl border-boxer hover:border-blue-500 transition" data-work="180" data-rest="60">3m / 1m (Pro)</button>
+        <button class="btnPreset py-2 text-xs font-bold bg-[#1c2232] rounded-xl border-boxer hover:border-blue-500 transition" data-work="120" data-rest="30">2m / 30s (Amateur)</button>
+        <button class="btnPreset py-2 text-xs font-bold bg-[#1c2232] rounded-xl border-boxer hover:border-blue-500 transition" data-work="300" data-rest="60">5m / 1m (Heavy)</button>
+      </div>
+    </section>
+
+    <!-- MINI-JUEGO REFLEJOS CANVAS -->
+    <section class="lg:col-span-7 rounded-3xl bg-[#131722] p-6 border-boxer flex flex-col justify-between">
+      <div class="flex justify-between items-center mb-2">
+        <h3 class="font-extrabold text-white tracking-wide">🎯 ENTRENADOR DE REFLEJOS Y COMBOS</h3>
+        <div class="flex items-center gap-4 text-xs font-bold">
+          <span class="text-amber-400">PUNTOS: <span id="gameScore" class="text-white text-sm">0</span></span>
+          <span class="text-blue-400">COMBO: <span id="gameCombo" class="text-white text-sm">x0</span></span>
+        </div>
+      </div>
+
+      <div class="relative w-full h-[260px] bg-[#0b0d12] rounded-2xl border border-slate-800 overflow-hidden flex items-center justify-center">
+        <canvas id="reflexCanvas" width="600" height="260" class="w-full h-full cursor-crosshair"></canvas>
+        <div id="gameOverlay" class="absolute inset-0 bg-black/70 flex flex-col items-center justify-center gap-3">
+          <p class="text-sm font-semibold text-slate-300">Golpea los sacos rápidos tan pronto como aparezcan.</p>
+          <button id="btnStartGame" class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 font-black text-white shadow-xl transition">🥊 INICIAR ENTRENAMIENTO</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RUTINAS DE ENTRENAMIENTO -->
+    <section class="lg:col-span-6 rounded-3xl bg-[#131722] p-6 border-boxer space-y-4">
+      <div class="flex justify-between items-center">
+        <h3 class="font-extrabold text-white tracking-wide">📋 RUTINAS Y SESIONES DE CAMPAMENTO</h3>
+        <span id="taskCount" class="text-xs font-bold text-[#808ea8]">0 TAREAS</span>
+      </div>
+
+      <div class="flex gap-2">
+        <input type="text" id="taskInput" placeholder="Añadir sparring, sombra, carrera..." class="flex-1 bg-[#0b0d12] border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500">
+        <select id="taskCategory" class="bg-[#0b0d12] border border-slate-800 rounded-xl px-3 py-2.5 text-xs font-bold">
+          <option value="Sparring">Sparring</option>
+          <option value="Físico">Físico</option>
+          <option value="Técnica">Técnica</option>
+          <option value="Corte Peso">Corte Peso</option>
+        </select>
+        <button id="btnAddTask" class="px-5 rounded-xl bg-blue-600 hover:bg-blue-700 font-black text-white text-lg transition">＋</button>
+      </div>
+
+      <div id="taskList" class="space-y-2 max-h-[300px] overflow-y-auto custom-scroll pr-1">
+        <!-- Dinámico -->
+      </div>
+    </section>
+
+    <!-- CUADERNO TÁCTICO DEL CORNERMAN -->
+    <section class="lg:col-span-6 rounded-3xl bg-[#131722] p-6 border-boxer space-y-4">
+      <div class="flex justify-between items-center">
+        <h3 class="font-extrabold text-white tracking-wide">📝 ESQUINA & NOTAS TÁCTICAS</h3>
+        <span class="text-xs text-[#808ea8]">ESTRATEGIAS</span>
+      </div>
+
+      <div class="space-y-2">
+        <input type="text" id="noteTitle" placeholder="Título de la nota / Rival..." class="w-full bg-[#0b0d12] border border-slate-800 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-blue-500">
+        <textarea id="noteBody" rows="3" placeholder="Apunta combinaciones, puntos débiles, dieta o instrucciones..." class="w-full bg-[#0b0d12] border border-slate-800 rounded-xl p-4 text-sm focus:outline-none focus:border-blue-500 resize-none"></textarea>
+        <button id="btnAddNote" class="w-full py-2.5 rounded-xl bg-[#1c2232] hover:bg-slate-700 font-bold border-boxer transition text-sm">GUARDAR NOTA DE CORNER</button>
+      </div>
+
+      <div id="noteList" class="space-y-2 max-h-[200px] overflow-y-auto custom-scroll pr-1">
+        <!-- Dinámico -->
+      </div>
+    </section>
+
+    <!-- CONTROL DE PESO Y SEGUIMIENTO -->
+    <section class="lg:col-span-4 rounded-3xl bg-[#131722] p-6 border-boxer space-y-4">
+      <h3 class="font-extrabold text-white tracking-wide">⚖️ CONVERTIDOR & CORTE DE PESO</h3>
+      
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs font-bold text-[#808ea8] block mb-1">PESO ACTUAL (KG)</label>
+          <input type="number" id="inputKg" placeholder="Ej: 67.5" class="w-full bg-[#0b0d12] border border-slate-800 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-blue-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 pt-1">
+          <div class="bg-[#0b0d12] p-3 rounded-xl border border-slate-800 text-center">
+            <span class="text-xs text-[#808ea8] block">LIBRAS (LBS)</span>
+            <span id="resLbs" class="text-xl font-bold text-amber-400">0.0</span>
+          </div>
+          <div class="bg-[#0b0d12] p-3 rounded-xl border border-slate-800 text-center">
+            <span class="text-xs text-[#808ea8] block">STONES (ST)</span>
+            <span id="resStones" class="text-xl font-bold text-slate-200">0.0</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FRASES E INSPIRACIÓN -->
+    <section class="lg:col-span-4 rounded-3xl bg-[#131722] p-6 border-boxer space-y-4 flex flex-col justify-between">
+      <div class="flex justify-between items-center">
+        <h3 class="font-extrabold text-[#808ea8] text-xs tracking-widest uppercase">🥊 PALABRA DE CAMPEÓN</h3>
+        <button id="btnNewQuote" class="text-xs font-bold text-blue-400 hover:underline">OTRA FRASE</button>
+      </div>
+
+      <div class="my-auto py-2">
+        <p id="quoteText" class="text-lg font-semibold italic text-slate-200">"Imposible es solo una palabra que usan los hombres pequeños para vivir fácilmente en el mundo que se les dio."</p>
+        <span id="quoteAuthor" class="text-xs font-bold text-amber-400 mt-2 block">— Muhammad Ali</span>
+      </div>
+
+      <div class="text-xs text-[#808ea8] border-t border-slate-800 pt-3">Mantén la mentalidad fría y los puños calientes.</div>
+    </section>
+
+    <!-- HIDRATACIÓN Y HÁBITOS -->
+    <section class="lg:col-span-4 rounded-3xl bg-[#131722] p-6 border-boxer space-y-4">
+      <h3 class="font-extrabold text-white tracking-wide">💧 REGISTRO DE HIDRATACIÓN</h3>
+      
+      <div class="flex items-center justify-between bg-[#0b0d12] p-4 rounded-2xl border border-slate-800">
+        <div>
+          <span class="text-xs text-[#808ea8] block">INGESTA DIARIA</span>
+          <span id="waterVol" class="text-2xl font-black text-cyan-400">0.0 / 4.0 L</span>
+        </div>
+        <div class="flex gap-2">
+          <button id="btnAddWater" class="px-3 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 font-bold text-xs text-white transition">+0.5L</button>
+          <button id="btnResetWater" class="px-3 py-2 rounded-xl bg-[#1c2232] hover:bg-slate-700 font-bold text-xs border-boxer transition">↺</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="text-center text-xs text-[#808ea8] py-6 border-t border-slate-800">
+    THE BOXING CORNER • Tu centro personal de entrenamiento.
+  </footer>
+</div>
+
+<script>
+// --- GUARDADO LOCAL Y PERFIL ---
+const STORAGE_KEY = 'theCornerAzulState_v2';
+const defaultProfile = { name: 'MANUEL PARDO', alias: 'EL MATADOR', photo: '' };
+let profile = { ...defaultProfile };
+
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ profile, tasks, notes, waterLitres }));
+  } catch (err) {
+    console.warn('No se pudo guardar el estado local:', err);
+  }
+}
+function loadState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    profile = { ...defaultProfile, ...(saved.profile || {}) };
+    tasks = Array.isArray(saved.tasks) ? saved.tasks : [];
+    notes = Array.isArray(saved.notes) ? saved.notes : [];
+    waterLitres = Number.isFinite(saved.waterLitres) ? saved.waterLitres : 0;
+  } catch (err) {
+    console.warn('No se pudieron recuperar los datos guardados:', err);
+  }
+}
+function renderProfile() {
+  document.getElementById('fighterName').textContent = profile.name || defaultProfile.name;
+  document.getElementById('fighterAlias').textContent = `"${profile.alias || defaultProfile.alias}"`;
+  const avatar = document.getElementById('avatarImg');
+  if (profile.photo) avatar.src = profile.photo;
+  avatar.alt = profile.name || 'Foto del boxeador';
+}
+function openProfileEditor() {
+  document.getElementById('profileNameInput').value = profile.name;
+  document.getElementById('profileAliasInput').value = profile.alias;
+  const preview = document.getElementById('profilePhotoPreview');
+  if (profile.photo) { preview.src = profile.photo; preview.classList.remove('hidden'); }
+  else { preview.removeAttribute('src'); preview.classList.add('hidden'); }
+  document.getElementById('profilePhotoInput').value = '';
+  const modal = document.getElementById('profileModal');
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+function closeProfileEditor() {
+  const modal = document.getElementById('profileModal');
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+}
+
+// --- AUDIO SYNTHESIS (AUDIO CONTEXT) ---
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function playBell() {
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 1.2);
+  gain.gain.setValueAtTime(0.6, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + 1.2);
+}
+
+function playPunchSound() {
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(160, audioCtx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.15);
+  gain.gain.setValueAtTime(0.8, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + 0.15);
+}
+
+document.getElementById('btnBell').onclick = playBell;
+document.getElementById('btnExport').addEventListener('click', () => {
+  const backup = { profile, tasks, notes, waterLitres, exportedAt: new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'the-corner-azul-backup.json'; a.click();
+  URL.revokeObjectURL(url);
+});
+
+// --- CLOCK ---
+function updateClock() {
+  const d = new Date();
+  document.getElementById('clockDisplay').textContent = d.toLocaleTimeString('es-ES');
+  document.getElementById('dateDisplay').textContent = d.toLocaleDateString('es-ES', { weekday:'short', day:'numeric', month:'short' });
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// --- STATE MANAGER ---
+
+function updateStats() {
+  const doneTasks = tasks.filter(t => t.done).length;
+  document.getElementById('statDoneTasks').textContent = doneTasks;
+  document.getElementById('statNotes').textContent = notes.length;
+  document.getElementById('statWater').textContent = waterLitres.toFixed(1) + ' L';
+  document.getElementById('waterVol').textContent = waterLitres.toFixed(1) + ' / 4.0 L';
+  document.getElementById('taskCount').textContent = tasks.length + ' TAREAS';
+  saveState();
+}
+
+// --- TASKS ---
+function renderTasks() {
+  const list = document.getElementById('taskList');
+  if (!tasks.length) {
+    list.innerHTML = `<div class="text-center py-6 text-xs text-[#808ea8]">No hay rutinas programadas. Añade tu primera sesión.</div>`;
+    updateStats();
+    return;
+  }
+  list.innerHTML = tasks.map((t, idx) => `
+    <div class="flex items-center justify-between p-3 rounded-xl bg-[#0b0d12] border border-slate-800 ${t.done ? 'opacity-50 line-through' : ''}">
+      <div class="flex items-center gap-3">
+        <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${idx})" class="w-4 h-4 accent-blue-600">
+        <span class="text-sm font-semibold text-slate-200">${escapeHTML(t.text)}</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">${escapeHTML(t.cat)}</span>
+        <button onclick="deleteTask(${idx})" class="text-xs text-slate-500 hover:text-blue-400 px-1">✕</button>
+      </div>
+    </div>
+  `).join('');
+  updateStats();
+}
+
+document.getElementById('btnAddTask').onclick = () => {
+  const input = document.getElementById('taskInput');
+  const cat = document.getElementById('taskCategory').value;
+  if (!input.value.trim()) return;
+  tasks.unshift({ text: input.value.trim(), cat, done: false });
+  input.value = '';
+  renderTasks();
+};
+
+window.toggleTask = (idx) => {
+  tasks[idx].done = !tasks[idx].done;
+  renderTasks();
+};
+
+window.deleteTask = (idx) => {
+  tasks.splice(idx, 1);
+  renderTasks();
+};
+
+document.getElementById('taskInput').addEventListener('keydown', event => {
+  if (event.key === 'Enter') document.getElementById('btnAddTask').click();
+});
+
+// --- NOTES ---
+function renderNotes() {
+  const list = document.getElementById('noteList');
+  if (!notes.length) {
+    list.innerHTML = `<div class="text-center py-6 text-xs text-[#808ea8]">No hay notas estratégicas de esquina.</div>`;
+    updateStats();
+    return;
+  }
+  list.innerHTML = notes.map((n, idx) => `
+    <div class="p-3 rounded-xl bg-[#0b0d12] border border-slate-800 space-y-1">
+      <div class="flex justify-between items-center">
+        <strong class="text-xs font-bold text-amber-400">${escapeHTML(n.title)}</strong>
+        <button onclick="deleteNote(${idx})" class="text-xs text-slate-500 hover:text-blue-400">✕</button>
+      </div>
+      <p class="text-xs text-slate-300 whitespace-pre-wrap">${escapeHTML(n.body)}</p>
+    </div>
+  `).join('');
+  updateStats();
+}
+
+document.getElementById('btnAddNote').onclick = () => {
+  const title = document.getElementById('noteTitle').value.trim();
+  const body = document.getElementById('noteBody').value.trim();
+  if (!title && !body) return;
+  notes.unshift({ title: title || 'Nota de Asalto', body });
+  saveState();
+  document.getElementById('noteTitle').value = '';
+  document.getElementById('noteBody').value = '';
+  renderNotes();
+};
+
+window.deleteNote = (idx) => {
+  notes.splice(idx, 1);
+  renderNotes();
+  saveState();
+};
+
+// --- WEIGHT CONVERTER ---
+document.getElementById('inputKg').oninput = (e) => {
+  const kg = parseFloat(e.target.value) || 0;
+  document.getElementById('resLbs').textContent = (kg * 2.20462).toFixed(1);
+  document.getElementById('resStones').textContent = (kg * 0.157473).toFixed(1);
+};
+
+// --- WATER tracker ---
+document.getElementById('btnAddWater').onclick = () => {
+  waterLitres += 0.5;
+  updateStats();
+};
+document.getElementById('btnResetWater').onclick = () => {
+  waterLitres = 0;
+  updateStats();
+};
+
+// --- QUOTES ---
+const quotes = [
+  ["Imposible es solo una palabra que usan los hombres pequeños para vivir fácilmente.", "Muhammad Ali"],
+  ["No cuento mis abdominales. Solo empiezo a contar cuando empieza a doler.", "Muhammad Ali"],
+  ["El dolor es temporal. El orgullo es para siempre.", "Mike Tyson"],
+  ["Cuanto más sudas en la paz, menos sangras en la pelea.", "Norman Schwarzkopf"],
+  ["La disciplina es hacer lo que odias hacer, pero haciéndolo como si lo amaras.", "Mike Tyson"]
+];
+document.getElementById('btnNewQuote').onclick = () => {
+  const q = quotes[Math.floor(Math.random() * quotes.length)];
+  document.getElementById('quoteText').textContent = `"${q[0]}"`;
+  document.getElementById('quoteAuthor').textContent = `— ${q[1]}`;
+};
+
+// --- TIMER (ROUND CLOCK) ---
+let workTime = 180, restTime = 60;
+let currentTime = workTime;
+let isWorking = true;
+let currentRound = 1;
+let timerInterval = null;
+
+function updateTimerDisplay() {
+  const m = Math.floor(currentTime / 60).toString().padStart(2, '0');
+  const s = (currentTime % 60).toString().padStart(2, '0');
+  document.getElementById('timerDisplay').textContent = `${m}:${s}`;
+  document.getElementById('roundCounter').textContent = `ROUND ${currentRound} / 12`;
+  
+  const total = isWorking ? workTime : restTime;
+  const pct = ((total - currentTime) / total) * 360;
+  document.getElementById('timerRing').style.setProperty('--deg', `${pct}deg`);
+}
+
+document.getElementById('btnTimerStart').onclick = () => {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    document.getElementById('btnTimerStart').textContent = '▶ REANUDAR';
+    return;
+  }
+  
+  playBell();
+  document.getElementById('btnTimerStart').textContent = '⏸ PAUSAR';
+  timerInterval = setInterval(() => {
+    currentTime--;
+    if (currentTime <= 0) {
+      playBell();
+      if (isWorking) {
+        isWorking = false;
+        currentTime = restTime;
+        document.getElementById('roundMode').textContent = 'DESCANSO';
+        document.getElementById('roundMode').className = 'text-xs font-bold px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+      } else {
+        isWorking = true;
+        if (currentRound >= 12) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          currentRound = 12;
+          currentTime = 0;
+          document.getElementById('btnTimerStart').textContent = '🏁 CAMPAMENTO TERMINADO';
+          document.getElementById('roundMode').textContent = 'FINAL';
+          document.getElementById('roundMode').className = 'text-xs font-bold px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30';
+          updateTimerDisplay();
+          return;
+        }
+        currentRound++;
+        currentTime = workTime;
+        document.getElementById('roundMode').textContent = 'COMBATE';
+        document.getElementById('roundMode').className = 'text-xs font-bold px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30';
+      }
+    }
+    updateTimerDisplay();
+  }, 1000);
+};
+
+document.getElementById('btnTimerReset').onclick = () => {
+  clearInterval(timerInterval);
+  timerInterval = null;
+  isWorking = true;
+  currentRound = 1;
+  currentTime = workTime;
+  document.getElementById('btnTimerStart').textContent = '▶ ENTRAR EN ASALTO';
+  document.getElementById('roundMode').textContent = 'COMBATE';
+  document.getElementById('roundMode').className = 'text-xs font-bold px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30';
+  updateTimerDisplay();
+};
+
+document.querySelectorAll('.btnPreset').forEach(b => {
+  b.onclick = () => {
+    workTime = parseInt(b.dataset.work);
+    restTime = parseInt(b.dataset.rest);
+    document.getElementById('btnTimerReset').click();
+  };
+});
+
+// --- CANVAS REFLEX GAME ---
+const canvas = document.getElementById('reflexCanvas');
+const ctx = canvas.getContext('2d');
+let gameScore = 0, gameCombo = 0;
+let target = null;
+let gameActive = false;
+
+function spawnTarget() {
+  target = {
+    x: Math.random() * (canvas.width - 60) + 30,
+    y: Math.random() * (canvas.height - 60) + 30,
+    r: 25,
+    spawnTime: Date.now()
+  };
+}
+
+function drawGame() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  if (target) {
+    ctx.beginPath();
+    ctx.arc(target.x, target.y, target.r, 0, Math.PI * 2);
+    ctx.fillStyle = '#ff2a42';
+    ctx.fill();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = '#ffb703';
+    ctx.stroke();
+
+    // Dibujo del guante/saco central
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '16px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🥊', target.x, target.y);
+  }
+
+  if (gameActive) requestAnimationFrame(drawGame);
+}
+
+canvas.onclick = (e) => {
+  if (!gameActive || !target) return;
+  const rect = canvas.getBoundingClientRect();
+  const clickX = (e.clientX - rect.left) * (canvas.width / rect.width);
+  const clickY = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+  const dist = Math.hypot(clickX - target.x, clickY - target.y);
+  if (dist <= target.r) {
+    playPunchSound();
+    gameScore += 100 + (gameCombo * 10);
+    gameCombo++;
+    document.getElementById('gameScore').textContent = gameScore;
+    document.getElementById('gameCombo').textContent = `x${gameCombo}`;
+    spawnTarget();
+  } else {
+    gameCombo = 0;
+    document.getElementById('gameCombo').textContent = 'x0';
+  }
+};
+
+document.getElementById('btnStartGame').onclick = () => {
+  document.getElementById('gameOverlay').classList.add('hidden');
+  gameScore = 0;
+  gameCombo = 0;
+  gameActive = true;
+  document.getElementById('gameScore').textContent = '0';
+  document.getElementById('gameCombo').textContent = 'x0';
+  spawnTarget();
+  drawGame();
+};
+
+// --- EVENTOS DEL EDITOR DE PERFIL ---
+document.getElementById('btnEditProfile').addEventListener('click', openProfileEditor);
+document.getElementById('btnCloseProfile').addEventListener('click', closeProfileEditor);
+document.getElementById('btnCancelProfile').addEventListener('click', closeProfileEditor);
+document.getElementById('profileModal').addEventListener('click', e => {
+  if (e.target.id === 'profileModal') closeProfileEditor();
+});
+document.getElementById('btnSaveProfile').addEventListener('click', () => {
+  const name = document.getElementById('profileNameInput').value.trim();
+  const alias = document.getElementById('profileAliasInput').value.trim();
+  if (!name || !alias) {
+    alert('Escribe tanto tu nombre como tu apodo.');
+    return;
+  }
+  profile.name = name;
+  profile.alias = alias;
+  renderProfile();
+  saveState();
+  closeProfileEditor();
+});
+document.getElementById('profilePhotoInput').addEventListener('change', e => {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  if (!file.type.startsWith('image/')) { alert('Selecciona un archivo de imagen.'); return; }
+  if (file.size > 4 * 1024 * 1024) { alert('La imagen debe ocupar menos de 4 MB.'); e.target.value = ''; return; }
+  const reader = new FileReader();
+  reader.onload = () => {
+    profile.photo = String(reader.result);
+    const preview = document.getElementById('profilePhotoPreview');
+    preview.src = profile.photo;
+    preview.classList.remove('hidden');
+    renderProfile();
+    saveState();
+  };
+  reader.readAsDataURL(file);
+});
+document.getElementById('btnRemovePhoto').addEventListener('click', () => {
+  profile.photo = '';
+  document.getElementById('profilePhotoPreview').removeAttribute('src');
+  document.getElementById('profilePhotoPreview').classList.add('hidden');
+  document.getElementById('profilePhotoInput').value = '';
+  const avatar = document.getElementById('avatarImg');
+  avatar.src = '_46A2732-Mejorado-NR.jpg';
+  saveState();
+});
+
+// Cargar perfil y datos guardados antes de pintar la interfaz
+loadState();
+renderProfile();
+
+// INITIAL RENDER
+renderTasks();
+renderNotes();
+updateTimerDisplay();
+</script>
+</body>
+</html>
